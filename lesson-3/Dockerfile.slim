@@ -1,0 +1,32 @@
+FROM python:3.13-slim AS builder
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN python -m pip install --upgrade pip \
+    && python -m pip install --prefix=/install -r requirements.txt
+
+COPY export_model.py .
+ENV PYTHONPATH=/install/lib/python3.13/site-packages
+RUN mkdir -p model \
+    && python export_model.py
+
+FROM python:3.13-slim AS runtime
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/usr/local/lib/python3.13/site-packages
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+COPY --from=builder /app/model ./model
+COPY app ./app
+COPY example.jpg .
+
+ENTRYPOINT ["python", "app/inference.py"]
+CMD ["example.jpg"]
