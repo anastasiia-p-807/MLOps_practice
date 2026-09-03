@@ -1,0 +1,13 @@
+# Terraform local files
+**/.terraform/
+**/.terraform.lock.hcl
+**/*.tfstate
+**/*.tfstate.*
+**/terraform.tfvars
+**/terraform.tfvars.json
+**/backend.hcl
+
+# Plans and logs
+**/*.tfplan
+**/crash.log
+**/crash.*.log
