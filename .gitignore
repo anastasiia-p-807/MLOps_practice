@@ -11,3 +11,5 @@
 **/*.tfplan
 **/crash.log
 **/crash.*.log
+other/*
+zips/*
