@@ -1,0 +1,5 @@
+mlflow==3.10.1
+scikit-learn==1.8.0
+prometheus-client==0.23.1
+joblib==1.5.2
+boto3==1.43.89
