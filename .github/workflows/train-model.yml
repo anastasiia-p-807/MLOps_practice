@@ -1,0 +1,26 @@
+name: Train model workflow
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Start Step Function execution
+        run: |
+          aws stepfunctions start-execution \
+            --state-machine-arn "${{ secrets.AWS_STEP_FUNCTION_ARN }}" \
+            --name "train-${{ github.run_id }}-${{ github.sha }}" \
+            --input "{\"source\":\"github-actions\",\"commit\":\"${{ github.sha }}\",\"run_id\":\"${{ github.run_id }}\"}"
